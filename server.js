@@ -1,11 +1,14 @@
 // Import the main express file as a function
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const UserModel = require('./models/UserModel.js');
 const ProductModel = require('./models/ProductModel.js');
 
 // Invoke express
 const server = express();
+server.use(bodyParser.urlencoded({extended: false}));
+server.use(bodyParser.json());
 
 const dbString = "mongodb+srv://admin01:db12345@cluster0.oikl7.mongodb.net/test2?retryWrites=true&w=majority";
 
@@ -101,10 +104,10 @@ server.post(
     '/users',
     (req, res) => {
         const formData = {
-            firstName: 'Michael',
-            lastName: 'Jordan',
-            email: 'mvp@bulls.com',
-            password: '232323'
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.email
         };
 
         const newUserModel = new UserModel(formData);
