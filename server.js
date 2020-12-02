@@ -96,6 +96,35 @@ server.post(
     }
 )
 
+
+server.post(
+    '/users',
+    (req, res) => {
+        const formData = {
+            firstName: 'Michael',
+            lastName: 'Jordan',
+            email: 'mvp@bulls.com',
+            password: '232323'
+        };
+
+        const newUserModel = new UserModel(formData);
+    
+        newUserModel
+        .save()
+        .then(
+            (document) => {
+                res.send(document)
+            }
+        )
+        .catch(
+            (error) => {
+                console.log('error', error);
+                res.send({'error': error})
+            }
+        )
+    }
+)
+
 server.get(
     '*',
     (req, res) => {
