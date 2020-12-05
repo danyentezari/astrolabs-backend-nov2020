@@ -19,40 +19,58 @@ router.post(
          * Here we check for (A) uniques emails and
          * (B) prepare password for registration
          */
-
-        
+    
         /* Part (A) */
+        // 1. Search the database for a matching email address
+        UserModel
+        .findOne({ email: formData.email })
+        .then(
+            (document) => {
 
-        /* Part (B) */
-        
-        // 1. Generate a salt
-        bcrypt.genSalt(
-            (err, salt) => {
+                // 2.1. If there is a match, reject the registration
+                if(document) {
+                    res.send({ message: "An account with that email already exists." })
+                }
 
-                // 2. Take salt and user's password to hash password
-                bcrypt.hash(
-                    formData.password,
-                    salt,
-                    (err, encryptedPassword) => {
-                        // 3. Replace the user's password with the hash
-                        newUserModel.password = encryptedPassword;
+                // 2.2. If there is not match, proceed to Part (B)
+                else {
+                    /* Part (B) */
+                    // 1. Generate a salt
+                    bcrypt.genSalt(
+                        (err, salt) => {
 
-                        // 4. Save to the database
-                        newUserModel
-                        .save()
-                        .then(
-                            (document) => {
-                                res.send(document)
-                            }
-                        )
-                        .catch(
-                            (error) => {
-                                console.log('error', error);
-                                res.send({'error': error})
-                            }
-                        )
-                    }
-                )
+                            // 2. Take salt and user's password to hash password
+                            bcrypt.hash(
+                                formData.password,
+                                salt,
+                                (err, encryptedPassword) => {
+                                    // 3. Replace the user's password with the hash
+                                    newUserModel.password = encryptedPassword;
+
+                                    // 4. Save to the database
+                                    newUserModel
+                                    .save()
+                                    .then(
+                                        (document) => {
+                                            res.send(document)
+                                        }
+                                    )
+                                    .catch(
+                                        (error) => {
+                                            console.log('error', error);
+                                            res.send({'error': error})
+                                        }
+                                    )
+                                }
+                            )
+                        }
+                    )
+                }
+            }
+        )
+        .catch(
+            (err) => {
+                res.send({err: "Something went wrong."})
             }
         )
     }
