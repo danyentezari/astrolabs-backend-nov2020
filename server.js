@@ -2,7 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const ProductModel = require('./models/ProductModel.js');
+const ProductRoutes = require('./routes/ProductRoutes');
 const UserRoutes = require('./routes/UserRoutes');
 
 // Invoke express
@@ -40,51 +40,10 @@ server.use(
 );
 
 // Products
-server.get(
+server.use(
     '/products',
-    (req, res) => {
-        ProductModel
-        .find()
-        .then(
-            (document) => {
-                res.send(document);
-            }
-        )
-        .catch(
-            (error) => {
-                console.log('error', error);
-            }
-        )
-    }
-)
-
-server.post(
-    '/products',
-    (req, res) => {
-       
-        const formData = {
-            brand: 'Google',
-            model: 'Pixel 5',
-            price: 2500
-        };
-
-        const newProduct = new ProductModel(formData);
-
-        newProduct
-        .save()
-        .then(
-            (document) => {
-                res.send(document)
-            }
-        )
-        .catch(
-            (error) => {
-                console.log('error', error);
-                res.send({'error': error})
-            }
-        )
-    }
-)
+    ProductRoutes
+);
 
 server.get(
     '*',
