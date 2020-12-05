@@ -1,5 +1,6 @@
 // Import the main express file as a function
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -10,6 +11,7 @@ const initPassportStrategy = require('./passport-config');
 
 // Invoke express
 const server = express();
+server.use(cors());
 server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
 // configure express to use passport
