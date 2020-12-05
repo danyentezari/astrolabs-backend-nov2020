@@ -2,8 +2,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const UserModel = require('./models/UserModel.js');
 const ProductModel = require('./models/ProductModel.js');
+const UserRoutes = require('./routes/UserRoutes');
 
 // Invoke express
 const server = express();
@@ -25,7 +25,7 @@ mongoose
         }
     )
 
-
+// Sample route
 server.get(
     '/', // http://www.apple.com/
     (req, res) => {
@@ -33,25 +33,13 @@ server.get(
     }
 );
 
-server.get(
+// Users route
+server.use(
     '/users',
-    (req, res) => {
-        UserModel
-        .find()
-        .then(
-            (document) => {
-                console.log('user', document);
-                res.send(document);
-            }
-        )
-        .catch(
-            (error) => {
-                console.log('error', error)
-            }
-        )
-    }
-)
+    UserRoutes
+);
 
+// Products
 server.get(
     '/products',
     (req, res) => {
@@ -69,7 +57,6 @@ server.get(
         )
     }
 )
-
 
 server.post(
     '/products',
@@ -99,42 +86,12 @@ server.post(
     }
 )
 
-
-server.post(
-    '/users',
-    (req, res) => {
-        const formData = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            password: req.body.email
-        };
-
-        const newUserModel = new UserModel(formData);
-    
-        newUserModel
-        .save()
-        .then(
-            (document) => {
-                res.send(document)
-            }
-        )
-        .catch(
-            (error) => {
-                console.log('error', error);
-                res.send({'error': error})
-            }
-        )
-    }
-)
-
 server.get(
     '*',
     (req, res) => {
         res.send('<h1>404</h1>')
     }
 );
-
 
 // Connects a port number on the server
 server.listen(
