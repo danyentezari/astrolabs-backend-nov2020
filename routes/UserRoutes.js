@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const jsonwebtoken = require('jsonwebtoken');
 const UserModel = require('../models/UserModel.js');
+const jwtSecret = "xyzABC123";
 
 router.post(
-    '/',
+    '/register',           // users/register
     (req, res) => {
         const formData = {
             firstName: req.body.firstName,
@@ -75,6 +77,69 @@ router.post(
         )
     }
 );
+
+router.post(
+    '/login',           // users/login
+    (req, res) => {
+        // 1. Capture the email and password
+        const formData = {
+            email: req.body.email,
+            password: req.body.password
+        }
+        // 2. Find a match in the database for email
+        UserModel
+        .findOne({ email: formData.email})
+        .then(
+            (document) => {         
+                if(document) {
+                    // 2.1. If email has been found, check their password
+                    bcrypt.compare(
+                        formData.password,
+                        document.password
+                    )
+                    .then(
+                        (passwordMatch) => {
+
+                            if(passwordMatch === true) {
+                                // 3.1. If their password is correct, generate the json web token
+                                const payload = {
+                                    id: document._id,
+                                    email: document.email
+                                }
+                                jsonwebtoken.sign(
+                                    payload,
+                                    jwtSecret,
+                                    (error, theToken) => {
+
+                                        if(error) {
+                                            res.send({ message: "Something went wrong"})
+                                        }
+
+                                        // 4. Send the json web token to the client
+                                        res.send({ theToken: theToken })
+                                    }
+                                )
+                            }
+                            else {
+                                // 3.2 If password is incorrect, reject the login
+                                res.send({ message: "Wrong email or password"});
+                            }
+                        }
+                    )
+                    .catch(
+                        (error) => {
+                            res.send({ message: "Something went wrong" })
+                        }
+                    )
+                } 
+                else {
+                    // 2.2 If no email match, reject the login
+                    res.send({ message: "Wrong email or password"});
+                }
+            }
+        )
+    }
+)
 
 router.get(
     '/',               // https://www.app.com/users
