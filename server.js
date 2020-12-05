@@ -2,13 +2,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 const ProductRoutes = require('./routes/ProductRoutes');
 const UserRoutes = require('./routes/UserRoutes');
+const initPassportStrategy = require('./passport-config');
+
 
 // Invoke express
 const server = express();
 server.use(bodyParser.urlencoded({extended: false}));
 server.use(bodyParser.json());
+// configure express to use passport
+server.use(passport.initialize());
+// configure passport to use passport-jwt
+initPassportStrategy(passport);
 
 const dbString = "mongodb+srv://admin01:db12345@cluster0.oikl7.mongodb.net/test2?retryWrites=true&w=majority";
 
@@ -42,6 +49,7 @@ server.use(
 // Products
 server.use(
     '/products',
+    passport.authenticate('jwt', {session: false}),
     ProductRoutes
 );
 
