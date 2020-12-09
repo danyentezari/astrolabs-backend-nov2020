@@ -3,7 +3,7 @@ const router = express.Router();
 const ProductModel = require('../models/ProductModel.js');
 
 router.get(
-    '/',
+    '/',                // http://localhost:3001/products
     (req, res) => {
         ProductModel
         .find()
@@ -21,13 +21,13 @@ router.get(
 )
 
 router.post(
-    '/',
+    '/',                // http://localhost:3001/products
     (req, res) => {
        
         const formData = {
-            brand: 'Google',
-            model: 'Pixel 5',
-            price: 2500
+            brand: req.body.brand,
+            model: req.body.model,
+            price: req.body.price
         };
 
         const newProduct = new ProductModel(formData);
