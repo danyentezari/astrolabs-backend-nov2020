@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
@@ -159,5 +160,27 @@ router.get(
         )
     }
 );
+
+router.get(
+    '/profile',
+    passport.authenticate('jwt', {session: false}),
+    (req, res) => {
+        UserModel
+        .findById(req.user.id)
+        .then(
+            (document) => {
+                res.send(document)
+            }
+        )
+        .catch(
+            (error) => {
+                res.send({
+                    message: "error occured " + error
+                })
+            }
+        )
+
+    }
+)
 
 module.exports = router;
