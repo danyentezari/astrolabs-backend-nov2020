@@ -34,13 +34,6 @@ mongoose
         }
     )
 
-// Sample route
-server.get(
-    '/', // http://www.apple.com/
-    (req, res) => {
-        res.send("<h1>Welcome to Home</h1>")
-    }
-);
 
 // Users route
 server.use(
@@ -54,6 +47,19 @@ server.use(
     passport.authenticate('jwt', {session: false}),
     ProductRoutes
 );
+
+
+// Sample route with parameters
+// server.get(
+//     '/:pagename', // http://www.apple.com/
+//     (req, res) => {
+//         // res.send({
+//         //     filter: req.query.filter,
+//         //     brand: req.query.brand
+//         // })
+//         res.send("<h1> Welcome to " + req.params.pagename + "</h1>")
+//     }
+// );
 
 server.get(
     '*',
