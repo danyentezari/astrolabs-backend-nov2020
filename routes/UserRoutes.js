@@ -30,7 +30,7 @@ router.post(
         UserModel
         .findOne({ email: formData.email })
         .then(
-            (document) => {
+            async (document) => {
 
                 // 2.1. If there is a match, reject the registration
                 if(document) {
@@ -39,30 +39,27 @@ router.post(
 
                 // 2.2. If there is not match, proceed to Part (B)
                 else {
-
-
                     /* Part (C) */
                     // 1. Check if image is included
                     if(Object.values(req.files).length>0){
                         // 1.1 If included, upload to Cloudinary
                         const files = Object.values(req.files);
-                        cloudinary.uploader.upload(
+                        await cloudinary.uploader.upload(
                             // location of file
                             files[0].path, 
                             // callback for when file is uploaded
-                            (cloudinaryResult, error) => {
+                            (error, cloudinaryResult) => {
                                 if(error) {
                                     console.log('error from cloudinary', error)
+                                    res.send({ error: error })
                                 }
+                                // 1.2 Take the image url and append it to newUserModel
                                 console.log(cloudinaryResult);
+                                newUserModel.photoUrl  = cloudinaryResult.url;
                             }
                         )
-
-                        // 1.2 Take the image url and append it to newUserModel
                     }
 
-                    res.send("done");
-                    return;
                     /* Part (B) */
                     // 1. Generate a salt
                     bcrypt.genSalt(
