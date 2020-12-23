@@ -1,23 +1,42 @@
 // Import the main express file as a function
 const express = require('express');
 const cors = require('cors');
+const cloudinary = require('cloudinary');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const expressFormData = require('express-form-data');
 const ProductRoutes = require('./routes/ProductRoutes');
 const UserRoutes = require('./routes/UserRoutes');
 const initPassportStrategy = require('./passport-config');
+require('dotenv').config();
 
 
 // Invoke express
 const server = express();
 server.use(cors());
 server.use(bodyParser.urlencoded({extended: false}));
+
+// configure express to read body of HTTP request
 server.use(bodyParser.json());
+
+// configure express to read file attachments
+server.use(expressFormData.parse());
+
 // configure express to use passport
 server.use(passport.initialize());
 // configure passport to use passport-jwt
 initPassportStrategy(passport);
+
+
+cloudinary.config(
+    {
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET
+    }
+)
+
 
 const dbString = "mongodb+srv://admin01:db12345@cluster0.oikl7.mongodb.net/test2?retryWrites=true&w=majority";
 
