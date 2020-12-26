@@ -38,7 +38,7 @@ cloudinary.config(
 )
 
 
-const dbString = "mongodb+srv://admin01:db12345@cluster0.oikl7.mongodb.net/test2?retryWrites=true&w=majority";
+const dbString = process.env.DB_URL;
 
 mongoose
     .connect(dbString, { useNewUrlParser: true, useUnifiedTopology: true })

@@ -4,7 +4,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const UserModel = require('../models/UserModel.js');
-const jwtSecret = "xyzABC123";
+const jwtSecret = process.env.SECRET;
 const cloudinary = require('cloudinary').v2;
 
 router.post(
